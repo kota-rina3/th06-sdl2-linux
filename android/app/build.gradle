@@ -15,7 +15,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.th06.game"
+        applicationId "tianqi233.th06.game"
         minSdkVersion 23
         targetSdkVersion 34
         versionCode 1

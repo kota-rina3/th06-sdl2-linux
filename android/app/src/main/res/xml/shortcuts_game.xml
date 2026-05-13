@@ -11,7 +11,7 @@
         android:shortcutLongLabel="@string/app_name">
         <intent
             android:action="android.intent.action.MAIN"
-            android:targetPackage="com.th06.game"
+            android:targetPackage="tianqi233.th06.game"
             android:targetClass="org.libsdl.app.SDLActivity" />
         <categories android:name="android.shortcut.conversation" />
     </shortcut>

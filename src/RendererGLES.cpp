@@ -175,7 +175,25 @@ static bool LoadGLES2Functions()
 static GLuint CompileShader(GLenum type, const char *src)
 {
     GLuint s = pglCreateShader(type);
-    pglShaderSource(s, 1, &src, NULL);
+
+    // GLSL ES 1.00 gotcha (issue #5, Mali-G51 / Kirin 710 black screen):
+    // Fragment shaders have *no* default int precision, and strict drivers
+    // (Mali, PowerVR) reject programs when the same-named uniform has a
+    // different implied precision in VS vs FS. Inject an ES-only preamble
+    // with matching `highp` precision for both float and int so the embedded
+    // shader text in gles_shaders.h can stay implementation-agnostic.
+    //
+    // Desktop GL ignores the block via `#ifdef GL_ES` and its default
+    // precision rules accept the shaders unchanged, so this is safe for the
+    // GL 2.0 / GL 2.1 desktop path as well.
+    static const char *kPrecisionPreamble =
+        "#ifdef GL_ES\n"
+        "precision highp float;\n"
+        "precision highp int;\n"
+        "#endif\n";
+    const char *sources[2] = { kPrecisionPreamble, src };
+    pglShaderSource(s, 2, sources, NULL);
+
     pglCompileShader(s);
     GLint ok = 0;
     pglGetShaderiv(s, GL_COMPILE_STATUS, &ok);
